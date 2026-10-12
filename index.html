@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Ôn Tập Từ Vựng Tiếng Anh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Quicksand:wght@600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --card-hover-border: rgba(255, 255, 255, 0.25);
+            --bg-gradient: white;
+            --card-border: #b12b2b;
+            --card-hover-border: rgba(243, 33, 33, 0.25);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
         }
@@ -109,7 +112,7 @@
         }
 
         .nav-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgb(8, 109, 140);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 32px 28px;
@@ -138,9 +141,11 @@
         .card-colorful {
             box-shadow: 0 10px 30px rgba(255, 117, 140, 0.08);
         }
+
         .card-colorful::before {
             background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 117, 140, 0.15), transparent 40%);
         }
+
         .card-colorful:hover {
             transform: translateY(-6px);
             border-color: rgba(255, 117, 140, 0.5);
@@ -151,9 +156,11 @@
         .card-simple {
             box-shadow: 0 10px 30px rgba(56, 189, 248, 0.08);
         }
+
         .card-simple::before {
             background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.15), transparent 40%);
         }
+
         .card-simple:hover {
             transform: translateY(-6px);
             border-color: rgba(56, 189, 248, 0.5);
@@ -258,6 +265,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="glow-1"></div>
     <div class="glow-2"></div>
@@ -276,9 +284,7 @@
             <a href="colorfulver-englishvocab.html" class="nav-card card-colorful" id="btn-colorful">
                 <div>
                     <div class="card-icon">👟</div>
-                    <span class="card-tag">Giao diện Sắc Màu • Hiệu ứng</span>
                     <h2 class="card-title">Ôn Tập Tiếng Anh Ngành Giày</h2>
-                    <p class="card-subtitle">Tiêu đề: <strong>Tiếng Anh Cơ Bản</strong><br>Bao gồm hiệu ứng bay bổng, màu sắc bắt mắt và âm thanh phản hồi sinh động.</p>
                 </div>
                 <div class="card-action">
                     <span>Bắt đầu ôn tập</span>
@@ -290,9 +296,8 @@
             <a href="simplecolorver-engvocab.html" class="nav-card card-simple" id="btn-simple">
                 <div>
                     <div class="card-icon">📝</div>
-                    <span class="card-tag">Giao diện Tối Giản • Tập trung</span>
                     <h2 class="card-title">Trắc Nghiệm Từ Vựng Tiếng Anh</h2>
-                    <p class="card-subtitle">Tiêu đề: <strong>Ôn Tập Từ Vựng Tiếng Anh</strong><br>Thiết kế thanh lịch, gọn gàng, thanh tiến trình trực quan giúp tối đa hóa tập trung.</p>
+
                 </div>
                 <div class="card-action">
                     <span>Bắt đầu trắc nghiệm</span>
@@ -302,7 +307,6 @@
         </div>
 
         <footer>
-            Deploy sẵn sàng trên Vercel • Hệ thống ôn tập nhanh
         </footer>
     </main>
 
@@ -317,4 +321,5 @@
         });
     </script>
 </body>
+
 </html>
