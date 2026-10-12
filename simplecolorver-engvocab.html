@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Từ Vựng Tiếng Anh</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            height: 10px;
+            width: 100%;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress {
+            background-color: #3498db;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .quiz-box {
+            margin-bottom: 25px;
+        }
+        .question {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 20px;
+            text-align: center;
+            background-color: #eaf2f8;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            color: #34495e;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 14px 20px;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #f4f6f7;
+            border-color: #3498db;
+        }
+        .option-btn.correct {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+            color: white;
+        }
+        .option-btn.wrong {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+        .score-container {
+            text-align: center;
+            display: none;
+        }
+        .score-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .score-text {
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+        .btn {
+            background-color: #3498db;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 24px;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .modes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .mode-btn {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background-color: #2c3e50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="setup-box">
+        <h1>Ôn Tập Từ Vựng Tiếng Anh</h1>
+        <div class="modes">
+            <button class="mode-btn active" id="mode-zh-vi" onclick="setMode('zh-vi')">Anh → Việt</button>
+            <button class="mode-btn" id="mode-vi-zh" onclick="setMode('vi-zh')">Việt → Anh</button>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="startQuiz()">Bắt đầu trắc nghiệm</button>
+        </div>
+    </div>
+
+    <div id="quiz-content" style="display: none;">
+        <h1 id="quiz-title">Trắc Nghiệm</h1>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="quiz-box">
+            <div class="question" id="question-text">Câu hỏi ở đây</div>
+            <div class="options-container" id="options-box">
+                <!-- Các đáp án sẽ render động bằng JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="result-box" class="score-container">
+        <div class="score-title">Kết Quả Hoàn Thành!</div>
+        <div class="score-text" id="score-report">Bạn đạt được 0/0 câu.</div>
+        <button class="btn" onclick="restartQuiz()">Luyện tập lại</button>
+    </div>
+</div>
+
+<script>
+    const dataset = [
+	{ "zh": "FINAL TECH PACK", "vi": "Bộ tài liệu kỹ thuật cuối cùng" },
+  { "zh": "PRODUCT LINE TYPE", "vi": "Loại dòng sản phẩm" },
+  { "zh": "DEVELOPMENT NO", "vi": "Mã phát triển mẫu" },
+  { "zh": "ASSIGNED AGENTS", "vi": "Nhân viên phụ trách" },
+  { "zh": "SEASON", "vi": "Mùa hàng" },
+  { "zh": "CATEGORY", "vi": "Danh mục sản phẩm" },
+  { "zh": "ITEM TRADING CODE", "vi": "Mã thương mại sản phẩm" },
+  { "zh": "ARTICLE DESCRIPTION", "vi": "Mô tả sản phẩm" },
+  { "zh": "ITEM MODE", "vi": "Dòng mẫu sản phẩm" },
+  { "zh": "ITEM MODE SUB TYPE", "vi": "Phân loại phụ của mẫu" },
+  { "zh": "DEFAULT SIZE", "vi": "Cỡ chuẩn" },
+  { "zh": "GENDER", "vi": "Giới tính sử dụng" },
+  { "zh": "KIDS TYPE", "vi": "Nhóm trẻ em" },
+  { "zh": "KIDS SUB TYPE", "vi": "Phân nhóm trẻ em" },
+  { "zh": "LAST", "vi": "Phom giày / Khuôn giày" },
+  { "zh": "COLOR CODE", "vi": "Mã màu" },
+  { "zh": "COLORWAYS", "vi": "Phối màu" },
+  { "zh": "MAIN COLOR GROUP", "vi": "Nhóm màu chính" },
+  { "zh": "SUB COLOR GROUP", "vi": "Nhóm màu phụ" },
+  { "zh": "STAGE", "vi": "Giai đoạn phát triển" },
+  { "zh": "WIDTH", "vi": "Độ rộng phom" },
+  { "zh": "PURPOSE OF PRODUCT", "vi": "Mục đích sử dụng sản phẩm" },
+{ "zh": "UPPER", "vi": "Thân giày" },
+  { "zh": "VAMP", "vi": "Phần mũi giày" },
+  { "zh": "QUARTER", "vi": "Phần hông giày" },
+  { "zh": "TOE RFMT", "vi": "Gia cố mũi giày" },
+  { "zh": "TOE BOX", "vi": "Hộp mũi giày" },
+  { "zh": "BACK COUNTER", "vi": "Gót sau" },
+  { "zh": "TONGUE", "vi": "Lưỡi gà" },
+  { "zh": "TONGUE PATCH", "vi": "Miếng trang trí lưỡi gà" },
+  { "zh": "TONGUE LINING", "vi": "Lót lưỡi gà" },
+  { "zh": "TONGUE SPONGE", "vi": "Mút lưỡi gà" },
+  { "zh": "TONGUE TOP", "vi": "Phần trên lưỡi gà" },
+  { "zh": "TONGUE BOTTOM", "vi": "Phần dưới lưỡi gà" },
+  { "zh": "QUARTER LINING", "vi": "Lót hông giày" },
+  { "zh": "QUARTER RFMT", "vi": "Gia cố hông giày" },
+  { "zh": "QUARTER PATCH", "vi": "Miếng trang trí hông giày" },
+  { "zh": "VAMP PATCH", "vi": "Miếng trang trí mũi giày" },
+  { "zh": "VAMP LINING", "vi": "Lót mũi giày" },
+  { "zh": "VAMP SPONGE", "vi": "Mút mũi giày" },
+  { "zh": "ANKLE", "vi": "Cổ chân" },
+  { "zh": "ANKLE RFMT", "vi": "Gia cố cổ chân" },
+  { "zh": "ANKLE SPONGE", "vi": "Mút cổ chân" },
+  { "zh": "COLLAR LINING", "vi": "Lót cổ giày" },
+  { "zh": "COLLAR RFMT", "vi": "Gia cố cổ giày" }
+];
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let currentMode = 'zh-vi'; // hoặc 'vi-zh'
+    let isAnswered = false;
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('mode-zh-vi').classList.toggle('active', mode === 'zh-vi');
+        document.getElementById('mode-vi-zh').classList.toggle('active', mode === 'vi-zh');
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateQuiz() {
+        // Xáo trộn toàn bộ danh sách từ vựng làm bộ câu hỏi gốc
+        let shuffledData = shuffleArray([...dataset]);
+        
+        currentQuestions = shuffledData.map(item => {
+            let questionWord = currentMode === 'zh-vi' ? item.zh : item.vi;
+            let correctWord = currentMode === 'zh-vi' ? item.vi : item.zh;
+            
+            // Lấy 3 đáp án nhiễu từ các từ vựng khác
+            let distractors = dataset
+                .filter(d => d.zh !== item.zh)
+                .map(d => currentMode === 'zh-vi' ? d.vi : d.zh);
+            
+            shuffleArray(distractors);
+            let chosenDistractors = distractors.slice(0, 3);
+            
+            // Gom chung đáp án đúng và đáp án nhiễu, sau đó đảo thứ tự đáp án
+            let options = shuffleArray([correctWord, ...chosenDistractors]);
+            
+            return {
+                question: questionWord,
+                correct: correctWord,
+                options: options
+            };
+        });
+    }
+
+    function startQuiz() {
+        document.getElementById('setup-box').style.display = 'none';
+        document.getElementById('quiz-content').style.display = 'block';
+        document.getElementById('result-box').style.display = 'none';
+        
+        currentIndex = 0;
+        score = 0;
+        generateQuiz();
+        showQuestion();
+    }
+
+    function showQuestion() {
+        isAnswered = false;
+        let q = currentQuestions[currentIndex];
+        
+        // Cập nhật thanh tiến trình
+        let percent = (currentIndex / currentQuestions.length) * 100;
+        document.getElementById('progress').style.width = percent + '%';
+        
+        document.getElementById('quiz-title').innerText = `Câu ${currentIndex + 1} / ${currentQuestions.length}`;
+        document.getElementById('question-text').innerText = q.question;
+        
+        let optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(btn, opt, q.correct);
+            optionsBox.appendChild(btn);
+        });
+    }
+
+    function selectOption(button, selectedOpt, correctOpt) {
+        if (isAnswered) return;
+        isAnswered = true;
+        
+        let buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.disabled = true);
+        
+        if (selectedOpt === correctOpt) {
+            button.classList.add('correct');
+            score++;
+        } else {
+            button.classList.add('wrong');
+            // Hiển thị luôn đáp án đúng cho người dùng thấy
+            buttons.forEach(btn => {
+                if (btn.innerText === correctOpt) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+        
+        // Chờ 1.5 giây để chuyển câu tiếp theo
+        setTimeout(() => {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 1500);
+    }
+
+    function showResult() {
+        document.getElementById('quiz-content').style.display = 'none';
+        document.getElementById('result-box').style.display = 'block';
+        
+        document.getElementById('progress').style.width = '100%';
+        document.getElementById('score-report').innerText = `Bạn đã trả lời đúng ${score} trên tổng số ${currentQuestions.length} câu.`;
+    }
+
+    function restartQuiz() {
+        document.getElementById('result-box').style.display = 'none';
+        document.getElementById('setup-box').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

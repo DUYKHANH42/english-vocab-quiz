@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Tiếng Anh Ngành Giày</title>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff758c;
+            --secondary: #ff7eb3;
+            --bg: #fdfbfb;
+            --success: #28a745;
+            --error: #dc3545;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+
+        body {
+       		background: linear-gradient(120deg, #ffffff 0%, #a9f3ff 100%);
+    		min-height: 100vh;
+   		display: flex;
+   		justify-content: center;
+   		align-items: center;
+    		overflow: hidden;
+        }
+
+        /* Hiệu ứng bay bổng */
+        .floating {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .quiz-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; }
+
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #555; }
+
+        .question-box {
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 2px dashed #ffcbd1;
+        }
+
+        .question-text { font-size: 1.6rem; color: #333; font-weight: 700; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        button.option-btn {
+            background: white;
+            border: 2px solid #eee;
+            padding: 15px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-weight: 600;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button.option-btn:hover { background: #fff0f3; border-color: var(--primary); transform: scale(1.02); }
+        
+        button.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        button.wrong { background: var(--error) !important; color: white; border-color: var(--error); }
+
+        #next-btn {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            display: none;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>Tiếng Anh Cơ Bản </h1>
+        <div class="stats">
+            <span>Câu: <span id="current-idx">1</span>/<span id="total-count">0</span></span>
+            <span>Đúng: <span id="score">0</span></span>
+        </div>
+
+        <div class="question-box">
+            <p style="font-size: 0.85rem; color: #888; margin-bottom: 10px;">Từ này tiếng Anh là gì?</p>
+            <div class="question-text" id="vn-word">Đang tải...</div>
+        </div>
+
+        <div class="options-grid" id="options"></div>
+
+        <button id="next-btn" onclick="nextQuestion()">Tiếp tục ➔</button>
+    </div>
+
+    <script>
+        const vocabulary = [
+   { "cn": "FINAL TECH PACK", "vn": "Bộ tài liệu kỹ thuật cuối cùng" },
+  { "cn": "PRODUCT LINE TYPE", "vn": "Loại dòng sản phẩm" },
+  { "cn": "DEVELOPMENT NO", "vn": "Mã phát triển mẫu" },
+  { "cn": "ASSIGNED AGENTS", "vn": "Nhân viên phụ trách" },
+  { "cn": "SEASON", "vn": "Mùa hàng" },
+  { "cn": "CATEGORY", "vn": "Danh mục sản phẩm" },
+  { "cn": "ITEM TRADING CODE", "vn": "Mã thương mại sản phẩm" },
+  { "cn": "ARTICLE DESCRIPTION", "vn": "Mô tả sản phẩm" },
+  { "cn": "ITEM MODE", "vn": "Dòng mẫu sản phẩm" },
+  { "cn": "ITEM MODE SUB TYPE", "vn": "Phân loại phụ của mẫu" },
+  { "cn": "DEFAULT SIZE", "vn": "Cỡ chuẩn" },
+  { "cn": "GENDER", "vn": "Giới tính sử dụng" },
+  { "cn": "KIDS TYPE", "vn": "Nhóm trẻ em" },
+  { "cn": "KIDS SUB TYPE", "vn": "Phân nhóm trẻ em" },
+  { "cn": "LAST", "vn": "Phom giày / Khuôn giày" },
+  { "cn": "COLOR CODE", "vn": "Mã màu" },
+  { "cn": "COLORWAYS", "vn": "Phối màu" },
+  { "cn": "MAIN COLOR GROUP", "vn": "Nhóm màu chính" },
+  { "cn": "SUB COLOR GROUP", "vn": "Nhóm màu phụ" },
+  { "cn": "STAGE", "vn": "Giai đoạn phát triển" },
+  { "cn": "WIDTH", "vn": "Độ rộng phom" },
+  { "cn": "PURPOSE OF PRODUCT", "vn": "Mục đích sử dụng sản phẩm" },
+{ "cn": "UPPER", "vn": "Thân giày" },
+  { "cn": "VAMP", "vn": "Phần mũi giày" },
+  { "cn": "QUARTER", "vn": "Phần hông giày" },
+  { "cn": "TOE RFMT", "vn": "Gia cố mũi giày" },
+  { "cn": "TOE BOX", "vn": "Hộp mũi giày" },
+  { "cn": "BACK COUNTER", "vn": "Gót sau" },
+  { "cn": "TONGUE", "vn": "Lưỡi gà" },
+  { "cn": "TONGUE PATCH", "vn": "Miếng trang trí lưỡi gà" },
+  { "cn": "TONGUE LINING", "vn": "Lót lưỡi gà" },
+  { "cn": "TONGUE SPONGE", "vn": "Mút lưỡi gà" },
+  { "cn": "TONGUE TOP", "vn": "Phần trên lưỡi gà" },
+  { "cn": "TONGUE BOTTOM", "vn": "Phần dưới lưỡi gà" },
+  { "cn": "QUARTER LINING", "vn": "Lót hông giày" },
+  { "cn": "QUARTER RFMT", "vn": "Gia cố hông giày" },
+  { "cn": "QUARTER PATCH", "vn": "Miếng trang trí hông giày" },
+  { "cn": "VAMP PATCH", "vn": "Miếng trang trí mũi giày" },
+  { "cn": "VAMP LINING", "vn": "Lót mũi giày" },
+  { "cn": "VAMP SPONGE", "vn": "Mút mũi giày" },
+  { "cn": "ANKLE", "vn": "Cổ chân" },
+  { "cn": "ANKLE RFMT", "vn": "Gia cố cổ chân" },
+  { "cn": "ANKLE SPONGE", "vn": "Mút cổ chân" },
+  { "cn": "COLLAR LINING", "vn": "Lót cổ giày" },
+  { "cn": "COLLAR RFMT", "vn": "Gia cố cổ giày" }
+
+];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function initQuiz() {
+            vocabulary.sort(() => Math.random() - 0.5);
+            document.getElementById('total-count').innerText = vocabulary.length;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = vocabulary[currentQuestion];
+            document.getElementById('vn-word').innerText = q.vn;
+            document.getElementById('current-idx').innerText = currentQuestion + 1;
+            document.getElementById('next-btn').style.display = 'none';
+            
+            let options = [q.cn];
+            while (options.length < 4) {
+                let randomCn = vocabulary[Math.floor(Math.random() * vocabulary.length)].cn;
+                if (!options.includes(randomCn)) options.push(randomCn);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.classList.add('option-btn');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, q.cn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('score').innerText = score;
+            } else {
+                btn.classList.add('wrong');
+                allBtns.forEach(b => { if(b.innerText === correct) b.classList.add('correct'); });
+            }
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < vocabulary.length) {
+                showQuestion();
+            } else {
+                alert(`Tuyệt vời! Bạn đã hoàn thành ${vocabulary.length} từ vựng. Điểm số: ${score}/${vocabulary.length}`);
+                currentQuestion = 0; score = 0; initQuiz();
+            }
+        }
+
+        function createFloating() {
+            const el = document.createElement('div');
+            el.classList.add('floating');
+            el.innerHTML = ['👑', '⚡', '🚀', '🔥'][Math.floor(Math.random() * 4)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.fontSize = Math.random() * 20 + 10 + 'px';
+            el.style.animationDuration = Math.random() * 3 + 4 + 's';
+            el.style.opacity = Math.random() * 0.5 + 0.2;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 6000);
+        }
+        setInterval(createFloating, 500);
+
+        initQuiz();
+    </script>
+</body>
+</html>
